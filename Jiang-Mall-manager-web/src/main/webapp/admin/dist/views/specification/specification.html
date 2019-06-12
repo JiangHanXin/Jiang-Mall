@@ -1,0 +1,293 @@
+
+<title>数据操作 - 规格表格</title>
+
+<div class="layui-card layadmin-header">
+    <div class="layui-breadcrumb" lay-filter="breadcrumb">
+        <a lay-href="">主页</a>
+        <a><cite>规格管理</cite></a>
+        <a><cite>规格表格</cite></a>
+        <a><cite>数据操作</cite></a>
+    </div>
+</div>
+
+<div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-header">数据操作</div>
+                <div class="layui-card-body">
+                        <a class="layui-btn layui-btn-normal" href="index.html">返回</a>
+                        <div class="layui-btn-group">
+                            <button class="layui-btn layui-btn-normal" id="btn-newguige">新增规格</button>
+                            <button class="layui-btn" id="btn-expand">全部展开</button>
+                            <button class="layui-btn" id="btn-fold">全部折叠</button>
+                            <button class="layui-btn" id="btn-refresh">刷新表格</button>
+                        </div>
+
+                        <table id="table1" class="layui-table" lay-filter="table1"></table>
+                        <i class="iconfont icon-attribute:before"></i>
+                    <!-- 操作列 -->
+                    <script type="text/html" id="oper-col">
+                        <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="edit">修改</a>
+                        <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+                    </script>
+
+                    <span class="iconfont icon-attribute"></span>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    layui.config({
+        base: 'module/'
+    }).extend({
+        treetable: 'treetable-lay/treetable'
+    }).use(['table', 'treetable','admin','view','form'], function () {
+        var $ = layui.jquery;
+        var table = layui.table;
+        var treetable = layui.treetable;
+        var admin = layui.admin;
+        var view = layui.view;
+        var form = layui.form;
+
+        // 渲染表格
+        var renderTable = function () {
+            layer.load(2);
+            treetable.render({
+                treeColIndex: 1,
+                treeSpid: "0",
+                treeIdName: 'd_id',
+                treePidName: 'd_pid',
+                treeDefaultClose: true,
+                treeLinkage: false,
+                elem: '#table1',
+                url: '/specification/Guige',
+                page: false,
+                cols: [[
+                    {type: 'numbers'},
+                    {field: 'id', title: 'ID'},
+                    {field: 'name', title: '规格名称'},
+                    {field: 'pid', title: '规格属性ID'},
+                    {templet: '#oper-col', width:120,title: '操作',fixed:'right',align:'center'}
+                ]],
+                done: function () {
+                    layer.closeAll('loading');
+                }
+            });
+        };
+
+        renderTable();
+
+        $('#btn-expand').click(function () {
+            treetable.expandAll('#table1');
+        });
+
+        $('#btn-fold').click(function () {
+            treetable.foldAll('#table1');
+        });
+
+        $('#btn-refresh').click(function () {
+            renderTable();
+        });
+
+        $('#btn-newguige').click(function(){
+            admin.popup({
+                title: '添加规格'
+                ,area: ['455px', '600px']
+                ,id: 'ADD-SPEC'
+                ,success: function(layero, index){
+                    view(this.id).render('specification/newSpecification').done(function(){
+                        form.render(null, 'layuiadmin-form-news');
+                        //监听提交
+                        form.on('submit(layuiadmin-form-submit)', function(data){
+                            var field = data.field; //获取提交的字段
+                            $.ajax({
+                                url:'/specification/add',
+                                type:'get',
+                                data:{'specName':field.specName,'attSpecofocation': field.attSpecofocation},
+                                success:function(result){
+                                    if(result.success){
+                                        layer.msg("添加成功！")
+                                        renderTable(); // 刷新数据
+                                    }else{
+                                        layer.msg("添加失败！")
+                                    }
+                                },
+                                error:function(data){
+                                    layer.alert("你好 我是代码，我出错了:" + data.responseText);
+                                }
+                            });
+                            //renderTable(); // 刷新数据
+                           // layui.table.reload('table1'); //重载表格 ,此组件不支持重载
+                            layer.close(index); //执行关闭
+                            return false;
+                        });
+                    });
+                }
+            });
+        });
+
+        //监听工具条
+        table.on('tool(table1)', function (obj) {
+            var data = obj.data;
+            var layEvent = obj.event;
+            if (layEvent === 'del') {
+                //判断选中的是父节点还是子节点
+                if(data.pid > 0){
+                    layer.confirm('你确定你要删了老子？', function(index){
+                        $.ajax({
+                            url:'/specification/deleteAttribute',
+                            type:'post',
+                            data:{'id': data.id},
+                            success:function(result){
+                                obj.del();
+                                layer.msg("删除成功！")
+                            },
+                            error:function(data){
+                                layer.alert("你好 我是代码，我出错了:" + data.responseText);
+                            }
+                        })
+                        layer.close(index);
+                        return false;
+                    });
+                }else{
+                    layer.confirm('你确定你要删了老子？', function(index){
+                        $.ajax({
+                            url:'/specification/delete',
+                            type:'post',
+                            data:{'id': data.id},
+                            success:function(result){
+                                obj.del();
+                                layer.msg("删除成功！")
+                                //renderTable(); // 刷新数据
+                            },
+                            error:function(data){
+                                layer.alert("你好 我是代码，我出错了:" + data.responseText);
+                            }
+                        })
+                        layer.close(index);
+                        return false;
+                    });
+
+                }
+
+            } else if (layEvent === 'edit') {
+                var uid = data.id;
+                var defaultName = data.specName;
+                var attSpecofocation = "";
+                //获取表格数据
+                var array = layui.table.cache.table1;
+                admin.popup({
+                    title: '修改规格属性'
+                    ,area: ['455px', '600px']
+                    ,id: 'UPDATE-SPEC'
+                    ,success: function(layero, index){
+                        view(this.id).render('specification/newSpecification',data).done(function(){
+                            $.each(array,function(index,item){
+                                if(item.pid == data.id){
+                                    attSpecofocation+=item.name+",";
+                                }
+                            });
+                            $('#tagsinputval').val(attSpecofocation);
+                            form.render(null, 'layuiadmin-form-news');
+                            //监听提交
+                            form.on('submit(layuiadmin-form-submit)', function(data){
+                                var field = data.field; //获取提交的字段
+                                //以下内容完全可以在js里面进行监听 判断，可以不需要根据值来判断，现在写了一半不想改了。
+                                //这一块写的有点乱，感觉不好,以下代码作废，换个方法和界面实现修改。
+                                // var updateData = [];
+                                // var str1 = field.attSpecofocation.split(',');
+                                // var str2 = attSpecofocation.split(',');
+                                // if(field.attSpecofocation != attSpecofocation.replace(',',"") && field.attSpecofocation.split(',').length > attSpecofocation.split(',').length-1){
+                                //     console.log(field.attSpecofocation.split(','))
+                                //     console.log(attSpecofocation.split(','))
+                                //     //去除重复数据，获取新增数据
+                                //     for(var i=0;i<str1.length;i++){
+                                //         if(str2!=null && str2!=""){
+                                //             for(var j=0;j<str2.length-1;j++){
+                                //                 if(str1[i] == str2[i]){
+                                //                     break;
+                                //                 }else{
+                                //                     updateData.push(str1[i]);
+                                //                     break;
+                                //                 }
+                                //             }
+                                //         }else{
+                                //             updateData.push(str1[i]);
+                                //         }
+                                //     }
+                                //     console.log("新增了"+updateData);
+                                //     $.ajax({
+                                //             url:'/specification/updateSpecAndAtt',
+                                //             type:'post',
+                                //             data:{"id":uid,"specName":field.specName,"attSpecofocation":updateData.toString(),"count":str1.length},
+                                //             success:function(result){
+                                //                 layer.msg("修改成功!");
+                                //                 renderTable();
+                                //             },
+                                //             error:function(data){
+                                //                 layer.alert("你好 我是代码，我出错了:" + data.responseText);
+                                //             }
+                                //         });
+                                // }
+                                // console.log(field.attSpecofocation  +","+attSpecofocation.replace(',',""))
+                                // if(field.attSpecofocation == attSpecofocation.replace(',',"")){
+                                //     if(field.specName == defaultName){
+                                //         layer.msg("数据无修改");
+                                //     }
+                                //     layer.msg("数据无修改");
+                                // }
+                                // if(field.attSpecofocation != attSpecofocation.replace(',',"") && field.attSpecofocation.split(',').length == attSpecofocation.split(',').length-1 && field.attSpecofocation!=""){
+                                //     updateData.push(field.attSpecofocation);
+                                //     $.ajax({
+                                //         url:'/specification/updateSpecAndAtt',
+                                //         type:'post',
+                                //         data:{"id":uid,"specName":field.specName,"attSpecofocation":updateData.toString(),"count":str1.length},
+                                //         success:function(result){
+                                //             layer.msg("修改成功!");
+                                //             renderTable();
+                                //         },
+                                //         error:function(data){
+                                //             layer.alert("你好 我是代码，我出错了:" + data.responseText);
+                                //         }
+                                //     });
+                                //     console.log(str1.length);
+                                // }
+                                // if(field.attSpecofocation == null || field.attSpecofocation ==  ''){
+                                //     console.log("数据为空")
+                                // }
+                                // if(field.attSpecofocation != attSpecofocation.replace(',',"") && field.attSpecofocation.split(',').length < attSpecofocation.split(',').length-1){
+                                //     console.log(field.attSpecofocation.split(','))
+                                //     console.log(attSpecofocation)
+                                //     console.log(attSpecofocation.split(','))
+                                //     for(var i=0;i<str1.length;i++){
+                                //         if(str2!=null && str2!=""){
+                                //             for(var j=0;j<str2.length-1;j++){
+                                //                 if(str1[i] == str2[i]){
+                                //                     break;
+                                //                 }else{
+                                //                     updateData.push(str1[i]);
+                                //                     break;
+                                //                 }
+                                //             }
+                                //         }else{
+                                //             updateData.push(str1[i]);
+                                //         }
+                                //     }
+                                //     layer.msg("删除了" + updateData);
+                                // }
+                                layer.close(index); //执行关闭
+                                return false;
+                            });
+                        });
+                    }
+                });
+
+            }
+        });
+    });
+</script>

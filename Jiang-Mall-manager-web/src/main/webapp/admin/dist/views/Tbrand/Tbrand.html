@@ -1,0 +1,220 @@
+
+
+<title>数据操作 - 数据表格</title>
+
+<div class="layui-card layadmin-header">
+    <div class="layui-breadcrumb" lay-filter="breadcrumb">
+        <a lay-href="">主页</a>
+        <a><cite>品牌管理</cite></a>
+        <a><cite>品牌表格</cite></a>
+        <a><cite>数据操作</cite></a>
+    </div>
+</div>
+
+<div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-header">数据操作</div>
+                <div class="layui-card-body">
+
+                    <div class="layui-inline" style="margin-bottom: 10px;">
+                        <input type="text" name="sousuo" placeholder="搜我" autocomplete="off" class="layui-input">
+                    </div>
+
+                    <div class="layui-btn-group test-table-operate-btn" style="margin-bottom: 10px;">
+                        <button type="button" class="layui-btn"><i class="layui-icon layui-icon-search"></i></button>
+                        <button class="layui-btn layui-btn-normal" data-type="newcommodity">新增品牌</button>
+                        <button class="layui-btn layui-btn-warm" data-type="batDelete">批量删除</button>
+                    </div>
+
+                    <table class="layui-hide" id="test-table-operate" lay-filter="test-table-operate"></table>
+
+                    <script type="text/html" id="test-table-operate-barDemo">
+                        <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail">查看</a>
+                        <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+                        <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+                    </script>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    layui.use(['admin', 'table','form'], function(){
+        var table = layui.table
+            ,admin = layui.admin
+            ,view = layui.view
+            ,form = layui.form;
+
+        var BrandCount = null;
+
+        var tableIns = table.render({
+            elem: '#test-table-operate'
+            ,url:'/brand/findPage'
+            ,cols: [[
+                {type:'checkbox', fixed: 'left'}
+                ,{field:'id', width:100, title: 'ID', sort: true, fixed: 'left',type:'numbers'}//本地序号
+                ,{field:'name', title: '品牌名称'}
+                ,{field:"firstChar",title:"品牌首字母",width:120,sort:true}
+                ,{width:178, align:'center', fixed: 'right', title:'操作',toolbar: '#test-table-operate-barDemo'}
+            ]]
+            ,page: true
+            ,done:function(data){ // 渲染后回调
+                BrandCount = data.count;
+            }
+        });
+        var data = tableIns.config.data;
+
+        //监听表格复选框选择
+        table.on('checkbox(test-table-operate)', function(obj){
+            console.log(obj)
+        });
+
+        table.on('tool(test-table-operate)',function(obj){
+            var data = obj.data;
+            if(obj.event == 'del'){
+                layer.confirm('真的删除行么', function(index){
+                    var id = data.id;
+                    obj.del();
+                    $.ajax({
+                        url:"/brand/delete",
+                        type:"get",
+                        data:{"id":id},
+                        success:function(result){
+                            if(result.success){
+                                layer.msg("删除成功!");
+                            }else{
+                                layer.msg("删除失败!",{icon:2,time:2000});
+                            }
+                        },
+                        error:function(data){
+                            layer.alert("你好 我是代码，我出错了:" + data.responseText);
+                        }
+                    })
+                    layui.table.reload('test-table-operate'); //重载表格
+                    layer.close(index);
+                });
+            }else if(obj.event == 'edit'){
+                admin.popup({
+                    title:'编辑品牌',
+                    area:['450px','200px'],
+                    id:'edit-BRAND',
+                    success:function(layero,index){
+                        view(this.id).render('component/newbrand/news',data).done(function(){
+                            form.render(null,'test-table-operate');
+                            //监听弹出层submit
+                            form.on('submit(layuiadmin-form-submit)',function(data){
+                                var field = data.field;
+                                var firstChar = Pinyin.getWordsCode(field.name)[0].toUpperCase();
+                                $.ajax({
+                                    url:'/brand/updateBrand',
+                                    type:'get',
+                                    data:{'id':field.id,'name': field.name,'firstChar':firstChar},
+                                    success:function(result){
+                                        if(result.success){
+                                            layer.msg("修改成功！")
+                                        }else{
+                                            layer.msg("修改失败！")
+                                        }
+                                    },
+                                    error:function(data){
+                                        layer.alert("你好 我是代码，我出错了:" + data.responseText);
+                                    }
+                                });
+                                layui.table.reload('test-table-operate'); //重载表格
+                                layer.close(index); //执行关闭
+                                //设置为True会自动渲染表格导致提交2次请求。
+                                return false;
+                            });
+                        });
+                    }
+                })
+            }
+        });
+
+        var $ = layui.$, active = {
+            getCheckData: function(){ //获取选中数据
+                var ids = "";
+                var checkStatus = table.checkStatus('test-table-operate')
+                    ,data = checkStatus.data;
+                    for(var i=0;i<data.length;i++){
+                        ids += data[i].id + ",";
+                    }
+                layer.alert(ids);
+             },newcommodity:function(){ // 新增按钮
+                admin.popup({
+                    title:"增加品牌"
+                    ,area:['450px','200px']
+                    ,id:"ADD-BRAND"
+                    ,success:function(layero,index){
+                        view(this.id).render('component/newbrand/news').done(function(){
+                            form.render(null, 'test-table-operate');
+                            //监听提交
+                            form.on('submit(layuiadmin-form-submit)', function(data){
+                                var field = data.field; //获取提交的字段
+                                var firstChar = Pinyin.getWordsCode(field.name)[0].toUpperCase();
+                                $.ajax({
+                                    type:'GET'
+                                    ,url:'/brand/addBrand?name='+ field.name + "&firstChar=" + firstChar
+                                    ,success:function(result){
+                                        if(result.success){
+                                            layer.msg("添加成功！")
+                                        }else{
+                                            layer.msg("添加失败！")
+                                        }
+                                    }
+                                    ,beforeSend:function(){
+                                        //防止表单注册
+                                    }
+                                    ,error:function(data){
+                                        layer.alert("你好 我是代码，我出错了:" + data.responseText);
+                                    }
+                                    ,complete:function(){
+                                        //完成后恢复按钮
+                                    }
+                                })
+                                layui.table.reload('test-table-operate'); //重载表格
+                                layer.close(index); //执行关闭
+                                return false;  //禁止跳转到news页面不然要发送2次请求。
+                            });
+                        });
+                    }
+                })
+            },batDelete:function(){
+                var checkStatus = table.checkStatus('test-table-operate')
+                    ,data = checkStatus.data
+                    ,ids = [];
+                for(var i=0;i<data.length;i++){
+                    ids.push(data[i].id)
+                }
+                layer.confirm('你确定你要删了老子？', function(index){
+                    $.ajax({
+                        url:'/brand/batDelete',
+                        type:'get',
+                        data:{'ids': ids.toString()},
+                        success:function(result){
+                            if(result.success){
+                                layer.msg("删除成功！")
+                            }else{
+                                layer.msg("删除失败！")
+                            }
+                        },
+                        error:function(data){
+                            layer.alert("你好 我是代码，我出错了:" + data.responseText);
+                        }
+                    })
+                    layui.table.reload('test-table-operate'); //重载表格
+                    layer.close(index);
+                });
+            }
+        };
+
+        $('.test-table-operate-btn .layui-btn').on('click', function(){
+            var type = $(this).data('type');
+            active[type] ? active[type].call(this) : '';
+        });
+
+    });
+</script>

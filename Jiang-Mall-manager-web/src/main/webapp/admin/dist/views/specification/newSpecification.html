@@ -1,0 +1,41 @@
+<div class="layui-form" lay-filter="layuiadmin-form-news" id="layuiadmin-form-news">
+    <form class="layui-form" action="" lay-filter="layuiadmin-form-submit">
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">规格名</label>
+            <div class="layui-input-inline">
+                <script type="text/html" template>
+                    <input type="text" name="specName" value="{{ d.params.name || '' }}" lay-verify="required" placeholder="请输入..." autocomplete="off" class="layui-input">
+                </script>
+            </div>
+        </div>
+        <div style="margin-top: 25px;">—————————<span style="color: red;">小小分隔线 字符来实现</span>————————</div>
+        <div class="box">
+            <h3 style="margin-top:25px;text-align: center;margin-right: 85px;margin-bottom: 10px;">规格选项</h3>
+            <div class="tagsinput-primary form-group">
+                <input name="attSpecofocation" id="tagsinputval" class="tagsinput" data-role="tagsinput" value="" placeholder="输入后回车">
+            </div>
+            <!--<button class="btn" onClick="getinput()">获取输入的值</button>-->
+        </div>
+
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button class="layui-btn" lay-submit lay-filter="layuiadmin-form-submit">立即提交</button>
+                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+            </div>
+        </div>
+    </form>
+</div>
+<style type="text/css">
+    *{font-family:"sta cartman","开心软件黑体简体","开心软件二黑简体",sans-serif}
+</style>
+<script src="layui/jquery.min.js"></script>
+<link rel="stylesheet" type="text/css" href="layui/css/css.css">
+<script src="layui/tagsinput.js" type="text/javascript" charset="utf-8"></script>
+<script type="text/javascript">
+
+    function getinput(){
+        alert($('#tagsinputval').val());
+    }
+
+</script>

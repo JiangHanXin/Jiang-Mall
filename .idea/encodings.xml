@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="Encoding" addBOMForNewFiles="with NO BOM">
+    <file url="file://$PROJECT_DIR$" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Jiang-Mall-common" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Jiang-Mall-dao" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Jiang-Mall-manager-web" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Jiang-Mall-manager-web" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Jiang-Mall-manager-web" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Jiang-Mall-pojo" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Jiang-Mall-sellergoods-interface" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Jiang-Mall-sellergoods-service" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Jiang-Mall-shop-web" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Jiang-Mall-shop-web" charset="UTF-8" />
+  </component>
+</project>
