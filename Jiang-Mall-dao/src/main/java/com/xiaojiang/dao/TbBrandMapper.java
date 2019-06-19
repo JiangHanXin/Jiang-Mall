@@ -22,7 +22,7 @@ public interface TbBrandMapper {
 
     List<TbBrand> selectByExample(TbBrandExample example);
 
-    List<TbBrand> selectAllBrand();
+    List<TbBrand> selectAllBrand(Map<Object,Object> map);
 
     TbBrand selectByPrimaryKey(Long id);
 

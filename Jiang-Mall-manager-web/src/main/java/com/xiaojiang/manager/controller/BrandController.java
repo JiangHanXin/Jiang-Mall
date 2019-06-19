@@ -51,8 +51,10 @@ public class BrandController {
     */
    @RequestMapping(value = "/findPage")
    @ResponseBody
-    public PageResule findPage(Integer page,Integer limit){
-       return brandService.findPage(page,limit);
+    public PageResule findPage(Integer page,Integer limit,String brandName){
+       Map<Object,Object> map = new HashMap<>();
+       map.put("brandName",brandName);
+       return brandService.findPage(page,limit,map);
     }
 
     /***

@@ -1,0 +1,116 @@
+<div class="layui-form" lay-filter="layuiadmin-form-news" id="layuiadmin-form-news">
+    <form class="layui-form" action="" lay-filter="layuiadmin-form-submit">
+
+        <div class="layui-form layui-form-pane">
+            <div class="layui-form-item">
+                <label class="layui-form-label">规格名</label>
+                <div class="layui-input-block">
+                    <script type="text/html" template>
+                        <input type="text" name="specName" value="{{ d.params.name || '' }}" lay-verify="required" placeholder="请输入..." autocomplete="off" class="layui-input">
+                    </script>
+                </div>
+            </div>
+        </div>
+
+        <div class="layui-form layui-form-pane">
+            <div class="layui-form-item">
+                <label class="layui-form-label">关联品牌</label>
+                <div class="layui-input-block">
+                    <select name="city" xm-select="select4" xm-select-search="http://yapi.demo.qunar.com/mock/9813/layui/search">
+                        <option value="">请选择关联品牌</option>
+                    </select>
+                </div>
+           </div>
+        </div>
+
+        <div class="layui-form layui-form-pane">
+            <div class="layui-form-item">
+                <label class="layui-form-label">关联规格</label>
+                <div class="layui-input-block">
+                    <select name="city" xm-select="select5" xm-select-search="http://yapi.demo.qunar.com/mock/9813/layui/search">
+                        <option value="">请选择关联规格</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="layui-form layui-form-pane">
+            <div class="layui-form-item">
+                <label class="layui-form-label">扩展属性</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="expansion" value="" required lay-verify="required" placeholder="请输入扩展" autocomplete="off" class="layui-input">
+                </div>
+                <button type="button" class="layui-btn layui-btn-warm " id="newExpansion">新增扩展</button>
+            </div>
+        </div>
+
+        <div class="layui-form layui-form-pane" id="ExpansionList" style="margin-bottom: 20px;">
+
+        </div>
+        <button type="button" class="layui-btn layui-btn-warm " id="getAllData">获取所有值</button>
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button class="layui-btn" lay-submit lay-filter="layuiadmin-form-submit">立即提交</button>
+                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+            </div>
+        </div>
+
+    </form>
+</div>
+<style type="text/css">
+    *{font-family:"sta cartman","开心软件黑体简体","开心软件二黑简体",sans-serif}
+</style>
+<script src="layui/jquery.min.js"></script>
+<link rel="stylesheet" href="layui/formSelects-v4.css" />
+<script type="text/javascript">
+    //全局定义一次, 加载formSelects
+    layui.config({
+        base: './layui/src/' //此处路径请自行处理, 可以使用绝对路径
+    }).extend({
+        formSelects: 'formSelects-v4'
+    });
+    //加载模块
+    layui.use(['jquery', 'formSelects','form'], function(){
+        var formSelects = layui.formSelects;
+        var form = layui.form;
+    });
+
+    $('#newExpansion').click(function(){
+        var expansion = $("input[name='expansion']").val();
+        var index = 1;
+        var str = "<div class=\"layui-input-inline\">\n" +
+            "                    <button type=\"button\" id=\"btnExpansion\" name=\"btnExpansion\" class=\"layui-btn layui-btn-sm layui-btn-normal\" style=\"margin-left:6px;margin-right: 10px;margin-bottom: 6px;\">\n" +
+            "                        <span>"+expansion+"</span>\n" +
+            "                        <i class=\"layui-icon\">&#x1006;</i>\n" +
+            "                    </button>\n" +
+            "                </div>";
+        if(expansion != "" && expansion != null){
+            $('#ExpansionList').append(str);
+            $("input[name='expansion']").val("");
+            index++;
+        }else{
+            layer.msg("请输入扩展属性!")
+        }
+
+        //删除扩展属性
+        $("#ExpansionList div button").each(function(i) {
+            $(this).click(function(){
+                this.remove();
+            });
+        })
+
+        $("#getAllData").click(function () {
+           // var data = [];
+            var sum = [];
+            $("#ExpansionList div button").each(function(i){
+                 // data.push($("#ExpansionList div button").eq(i)[0].innerText)
+                //获取所有属性值
+                    sum.push(this.innerText.substring(0,this.innerText.length-2));
+            });
+        })
+
+    })
+
+
+
+</script>

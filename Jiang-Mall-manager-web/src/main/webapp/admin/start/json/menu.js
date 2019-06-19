@@ -25,5 +25,18 @@
             "title":"模板管理",
             "jump":"typeTemplate/typeTemplate"
         }]
+},{
+    "name":"shopmanager",
+    "icon": "layui-icon-auz",
+    "title":"商家管理",
+    "list":[{
+        "name":"Merchantreview",
+        "title":"商家审核",
+        "jump": "Tbrand/Tbrand"
+    },{
+        "name":"Merchantmanagement",
+        "title":"商家管理",
+        "jump":"specification/specification"
+    }]
 }]
 }

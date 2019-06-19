@@ -1,3 +1,4 @@
 com\xiaojiang\sellergoods\serviceimpl\TypeTemplateServiceImpl.class
+com\xiaojiang\sellergoods\serviceimpl\SellerServiceImpl.class
 com\xiaojiang\sellergoods\serviceimpl\BrandServiceImpl.class
 com\xiaojiang\sellergoods\serviceimpl\SpecificationServiceImpl.class

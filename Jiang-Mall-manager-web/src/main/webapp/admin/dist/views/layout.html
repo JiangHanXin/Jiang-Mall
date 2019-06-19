@@ -58,7 +58,7 @@
       </li>
       <li class="layui-nav-item" lay-unselect>
         <!--登录成功以后把lay-url换成获取session获取用户姓名-->
-        <script type="text/html" template lay-url="./json/user/session.js"
+        <script type="text/html" template lay-url="/login/loginName"
         lay-done="layui.element.render('nav', 'layadmin-layout-right');">
           <a href="javascript:;">
             <cite>{{ d.data.username }}</cite>
@@ -67,7 +67,7 @@
             <dd><a lay-href="set/user/info">基本资料</a></dd>
             <dd><a lay-href="set/user/password">修改密码</a></dd>
             <hr>
-            <dd layadmin-event="logout" style="text-align: center;"><a>退出</a></dd>
+            <dd style="text-align: center;"><a href="/logout">退出</a></dd>
           </dl>
         </script>
       </li>

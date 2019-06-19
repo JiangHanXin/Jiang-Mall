@@ -4,6 +4,7 @@ import com.xiaojiang.pojo.PageResule;
 import com.xiaojiang.pojo.TbBrand;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @创建人:小江
@@ -22,7 +23,7 @@ public interface BrandService {
     /***
      * 查询分页数据
      */
-    PageResule findPage(Integer page,Integer size);
+    PageResule findPage(Integer page, Integer size, Map<Object,Object> map);
 
     void insertBrand(TbBrand brand);
 

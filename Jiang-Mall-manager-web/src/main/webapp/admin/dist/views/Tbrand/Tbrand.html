@@ -23,7 +23,7 @@
                     </div>
 
                     <div class="layui-btn-group test-table-operate-btn" style="margin-bottom: 10px;">
-                        <button type="button" class="layui-btn"><i class="layui-icon layui-icon-search"></i></button>
+                        <button type="button" class="layui-btn" data-type="Search"><i class="layui-icon layui-icon-search"></i></button>
                         <button class="layui-btn layui-btn-normal" data-type="newcommodity">新增品牌</button>
                         <button class="layui-btn layui-btn-warm" data-type="batDelete">批量删除</button>
                     </div>
@@ -135,7 +135,15 @@
         });
 
         var $ = layui.$, active = {
-            getCheckData: function(){ //获取选中数据
+            Search:function(){
+                var Sdata = $("input[name='sousuo']").val();
+                table.reload('test-table-operate',{
+                    url:'/brand/findPage',
+                    where:{
+                        brandName : Sdata
+                    }
+                })
+            }, getCheckData: function(){ //获取选中数据
                 var ids = "";
                 var checkStatus = table.checkStatus('test-table-operate')
                     ,data = checkStatus.data;

@@ -1,4 +1,5 @@
 com\xiaojiang\manager\controller\SpecificationController.class
+com\xiaojiang\manager\controller\LoginController.class
 com\xiaojiang\manager\controller\TypeTemplateController.class
 com\xiaojiang\manager\controller\BrandController.class
 com\xiaojiang\manager\utils\ServerStartupListener.class

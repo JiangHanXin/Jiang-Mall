@@ -81,6 +81,7 @@
       order by ${orderByClause}
     </if>
   </select>
+
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
@@ -178,8 +179,14 @@
       first_char = #{firstChar,jdbcType=VARCHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <select id="selectAllBrand">
+  <!--一定要带返回类型，不然找不到-->
+  <select id="selectAllBrand" parameterType="java.util.Map" resultType="com.xiaojiang.pojo.TbBrand">
     select *from tb_brand
+    <where>
+      <if test="brandName!=null">
+          AND name LIKE concat('%',#{brandName},'%')
+      </if>
+    </where>
   </select>
   <delete id="batDelete">
     delete from tb_brand where id in

@@ -33,9 +33,9 @@ public class BrandServiceImpl implements BrandService {
     }
 
     @Override
-    public PageResule findPage(Integer page,Integer size) {
+    public PageResule findPage(Integer page, Integer size, Map<Object,Object> map) {
         PageHelper.startPage(page,size);
-        Page<TbBrand> pages = (Page<TbBrand>) brandMapper.selectByExample(null);
+        Page<TbBrand> pages = (Page<TbBrand>) brandMapper.selectAllBrand(map);
         return new PageResule(0,"",pages.getTotal(),pages.getResult());
     }
 

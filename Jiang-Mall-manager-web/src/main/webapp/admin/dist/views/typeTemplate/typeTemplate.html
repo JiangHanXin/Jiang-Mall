@@ -24,7 +24,7 @@
 
                     <div class="layui-btn-group test-table-operate-btn" style="margin-bottom: 10px;">
                         <button type="button" class="layui-btn"><i class="layui-icon layui-icon-search"></i></button>
-                        <button class="layui-btn layui-btn-normal" data-type="newcommodity">新增模板</button>
+                        <button class="layui-btn layui-btn-normal" data-type="newTemplate">新增模板</button>
                         <button class="layui-btn layui-btn-warm" data-type="batDelete">批量删除</button>
                     </div>
 
@@ -144,18 +144,19 @@
                     ids += data[i].id + ",";
                 }
                 layer.alert(ids);
-            },newcommodity:function(){ // 新增按钮
+            },newTemplate:function(){ // 新增按钮
                 admin.popup({
-                    title:"增加品牌"
-                    ,area:['450px','200px']
+                    title:"增加模板"
+                    ,area:['450px','600px']
                     ,id:"ADD-BRAND"
                     ,success:function(layero,index){
-                        view(this.id).render('component/newbrand/news').done(function(){
+                        view(this.id).render('typeTemplate/newTypeTemplate').done(function(){
                             form.render(null, 'test-table-operate');
                             //监听提交
                             form.on('submit(layuiadmin-form-submit)', function(data){
                                 var field = data.field; //获取提交的字段
-                                var firstChar = Pinyin.getWordsCode(field.name)[0].toUpperCase();
+                                console.log(field)
+                                return false;
                                 $.ajax({
                                     type:'GET'
                                     ,url:'/brand/addBrand?name='+ field.name + "&firstChar=" + firstChar
